@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DNA : MonoBehaviour
 {
-	public float r, g, b;
+	public float r, g, b, sx, sy;
 	public float timeAlive;
 
 	private SpriteRenderer sRenderer;
@@ -22,5 +22,6 @@ public class DNA : MonoBehaviour
 		sRenderer = GetComponent<SpriteRenderer>();
 		sCollider = GetComponent<Collider2D>();
 		sRenderer.color = new Color(r, g, b);
+		transform.localScale = new Vector3(sx, sy, 0.0f);
 	}
 }

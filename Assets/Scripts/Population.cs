@@ -28,9 +28,12 @@ public class Population : MonoBehaviour
 		{
 			Vector3 pos = new Vector3(Random.Range(-9.5f, 9.5f), Random.Range(-4.5f, 4.5f), 0.0f);
 			GameObject obj = Instantiate(personPrefab, pos, Quaternion.identity);
+			
 			obj.GetComponent<DNA>().r = Random.Range(0.0f, 1.0f);
 			obj.GetComponent<DNA>().g = Random.Range(0.0f, 1.0f);
 			obj.GetComponent<DNA>().b = Random.Range(0.0f, 1.0f);
+			obj.GetComponent<DNA>().sx = Random.Range(0.4f, 1.0f);
+			obj.GetComponent<DNA>().sy = Random.Range(0.4f, 1.0f);
 			population.Add(obj);
 		}
 	}
@@ -44,10 +47,10 @@ public class Population : MonoBehaviour
 		}
 	}
 
-	private float Combine(float gene1, float gene2, float mutationChance)
+	private float Combine(float gene1, float gene2, float mutationMin, float mutationMax)
 	{
 		if (Random.Range(0.0f, 1.0f) < mutationChance)
-			return Random.Range(0.0f, 1.0f);
+			return Random.Range(mutationMin, mutationMax);
 
 		return Random.Range(0, 10) < 5 ? gene1 : gene2;
 	}
@@ -60,9 +63,12 @@ public class Population : MonoBehaviour
 		DNA dna2 = parent2.GetComponent<DNA>();
 		
 		// Swap parent dna and mutate
-		offspring.GetComponent<DNA>().r = Combine(dna1.r, dna2.r, mutationChance);
-		offspring.GetComponent<DNA>().g = Combine(dna1.g, dna2.g, mutationChance);
-		offspring.GetComponent<DNA>().b = Combine(dna1.b, dna2.b, mutationChance);
+		offspring.GetComponent<DNA>().r = Combine(dna1.r, dna2.r, 0.0f, 1.0f);
+		offspring.GetComponent<DNA>().g = Combine(dna1.g, dna2.g, 0.0f, 1.0f);
+		offspring.GetComponent<DNA>().b = Combine(dna1.b, dna2.b, 0.0f, 1.0f);
+		offspring.GetComponent<DNA>().sx = Combine(dna1.sx, dna2.sx, 0.4f, 1.0f);
+		offspring.GetComponent<DNA>().sy = Combine(dna1.sy, dna2.sy, 0.4f, 1.0f);
+
 		return offspring;
 	}
 
