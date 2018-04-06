@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class Population : MonoBehaviour
 
 	private int trialTime = 10;
 	private int generation = 1;
+	private float mutationChance = 0.05f;
 	
 	private GUIStyle guiStyle = new GUIStyle();
 	private void OnGUI()
@@ -38,6 +40,48 @@ public class Population : MonoBehaviour
 		if (elapsed > trialTime)
 		{
 			elapsed = 0;
+			BreedNewPopulation();
 		}
+	}
+
+	private float Combine(float gene1, float gene2, float mutationChance)
+	{
+		if (Random.Range(0.0f, 1.0f) < mutationChance)
+			return Random.Range(0.0f, 1.0f);
+
+		return Random.Range(0, 10) < 5 ? gene1 : gene2;
+	}
+
+	private GameObject Breed(GameObject parent1, GameObject parent2)
+	{
+		Vector3 pos = new Vector3(Random.Range(-9.5f, 9.5f), Random.Range(-4.5f, 4.5f), 0.0f);
+		GameObject offspring = Instantiate(personPrefab, pos, Quaternion.identity);
+		DNA dna1 = parent1.GetComponent<DNA>();
+		DNA dna2 = parent2.GetComponent<DNA>();
+		
+		// Swap parent dna and mutate
+		offspring.GetComponent<DNA>().r = Combine(dna1.r, dna2.r, mutationChance);
+		offspring.GetComponent<DNA>().g = Combine(dna1.g, dna2.g, mutationChance);
+		offspring.GetComponent<DNA>().b = Combine(dna1.b, dna2.b, mutationChance);
+		return offspring;
+	}
+
+	private void BreedNewPopulation()
+	{
+		// Order by fitness
+		List<GameObject> sortedList = population.OrderByDescending(o => o.GetComponent<DNA>().timeAlive).ToList();
+		population.Clear();
+
+		// Breed fittest half of sorted list 
+		for (int i = 0; i < sortedList.Count / 2; i++)
+		{
+			population.Add(Breed(sortedList[i], sortedList[i + 1]));
+			population.Add(Breed(sortedList[i + 1], sortedList[i]));
+		}
+
+		// Destroy previous population
+		for (int i = 0; i < sortedList.Count; i++)
+			Destroy(sortedList[i]);
+		generation++;
 	}
 }

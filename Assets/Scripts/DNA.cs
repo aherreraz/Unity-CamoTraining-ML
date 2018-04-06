@@ -5,15 +5,13 @@ using UnityEngine;
 public class DNA : MonoBehaviour
 {
 	public float r, g, b;
-	bool alive = true;
-	public float timeAlive = 0.0f;
+	public float timeAlive;
 
 	private SpriteRenderer sRenderer;
 	private Collider2D sCollider;
 
 	private void OnMouseDown()
 	{
-		alive = false;
 		timeAlive = Population.elapsed;
 		sRenderer.enabled = false;
 		sCollider.enabled = false;
